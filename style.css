@@ -1,0 +1,37 @@
+body{
+  background:black;
+  color:white;
+  text-align:center;
+  padding-top:100px;
+  font-size:30px;
+}
+
+button{
+  background:red;
+  color:white;
+  border:none;
+  padding:15px 30px;
+  font-size:20px;
+  border-radius:10px;
+}h1{
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow{
+
+  from{
+    color:white;
+  }
+
+  to{
+    color:red;
+  }
+
+}p{
+  font-size:20px;
+  color:gray;
+}img{
+  width:200px;
+  border-radius:20px;
+  margin-top:20px;
+}
