@@ -1,0 +1,222 @@
+// app.js - Backend server for Score Upgrader (Express + Node.js)
+// Future upgrade: authentication, score persistence, leaderboard API
+
+const express = require('express');
+const path = require('path');
+const fs = require('fs');
+const bcrypt = require('bcrypt');   // for password hashing (install: npm install bcrypt)
+const cors = require('cors');       // optional, for cross-origin if needed
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public'))); // serve static HTML/CSS/JS files
+
+// ---------- Data file paths ----------
+const USERS_FILE = path.join(__dirname, 'users.json');
+const LEADERBOARD_FILE = path.join(__dirname, 'leaderboard.json');
+
+// Helper: read/write JSON files
+function readJSON(filePath) {
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(data);
+  } catch (err) {
+    console.error(`Error reading ${filePath}:`, err);
+    return null;
+  }
+}
+
+function writeJSON(filePath, data) {
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+    return true;
+  } catch (err) {
+    console.error(`Error writing ${filePath}:`, err);
+    return false;
+  }
+}
+
+// ---------- Helper: update leaderboard based on user scores ----------
+function updateLeaderboard() {
+  const usersData = readJSON(USERS_FILE);
+  if (!usersData || !usersData.users) return false;
+
+  // sort by score desc, then by perfectUpgrades desc, then by lastAttempt desc
+  const sorted = [...usersData.users].sort((a, b) => {
+    if (a.score !== b.score) return b.score - a.score;
+    if (a.perfectUpgrades !== b.perfectUpgrades) return b.perfectUpgrades - a.perfectUpgrades;
+    return new Date(b.lastAttempt) - new Date(a.lastAttempt);
+  });
+
+  const leaderboard = {
+    lastUpdated: new Date().toISOString(),
+    topScores: sorted.slice(0, 100).map((user, idx) => ({
+      rank: idx + 1,
+      username: user.username,
+      score: user.score,
+      perfectUpgrades: user.perfectUpgrades,
+      lastAttempt: user.lastAttempt,
+      badge: user.badge || getBadgeByRank(idx + 1)
+    }))
+  };
+  return writeJSON(LEADERBOARD_FILE, leaderboard);
+}
+
+function getBadgeByRank(rank) {
+  if (rank === 1) return '🏆';
+  if (rank === 2) return '⭐';
+  if (rank === 3) return '🔥';
+  return '📈';
+}
+
+// ---------- API Routes ----------
+
+// 1. Login endpoint
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ success: false, message: 'Username and password required' });
+  }
+
+  const usersData = readJSON(USERS_FILE);
+  if (!usersData) {
+    return res.status(500).json({ success: false, message: 'Server error: cannot read users' });
+  }
+
+  const user = usersData.users.find(u => u.username === username);
+  if (!user) {
+    return res.status(401).json({ success: false, message: 'Invalid credentials' });
+  }
+
+  // Compare passwords (supports plain text or bcrypt hash)
+  let passwordMatch = false;
+  if (user.password.startsWith('$2b$')) {
+    passwordMatch = await bcrypt.compare(password, user.password);
+  } else {
+    passwordMatch = (user.password === password);
+  }
+
+  if (!passwordMatch) {
+    return res.status(401).json({ success: false, message: 'Invalid credentials' });
+  }
+
+  // Return user info without password
+  const { password: _, ...safeUser } = user;
+  res.json({ success: true, user: safeUser });
+});
+
+// 2. Register new user (optional upgrade)
+app.post('/api/register', async (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password || username.length < 3) {
+    return res.status(400).json({ success: false, message: 'Valid username (min 3 chars) and password required' });
+  }
+
+  const usersData = readJSON(USERS_FILE);
+  if (!usersData) return res.status(500).json({ success: false, message: 'Server error' });
+
+  if (usersData.users.find(u => u.username === username)) {
+    return res.status(409).json({ success: false, message: 'Username already exists' });
+  }
+
+  // Hash password for security
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = {
+    id: usersData.users.length + 1,
+    username,
+    password: hashedPassword,
+    score: 0,
+    perfectUpgrades: 0,
+    lastAttempt: new Date().toISOString().split('T')[0],
+    badge: '🌱'
+  };
+  usersData.users.push(newUser);
+  if (writeJSON(USERS_FILE, usersData)) {
+    updateLeaderboard();
+    const { password: _, ...safeUser } = newUser;
+    res.status(201).json({ success: true, user: safeUser });
+  } else {
+    res.status(500).json({ success: false, message: 'Failed to save user' });
+  }
+});
+
+// 3. Update user score after an upgrade
+app.post('/api/update-score', async (req, res) => {
+  const { username, newScore, perfectUpgradeIncrement = 0 } = req.body;
+  if (!username || newScore === undefined) {
+    return res.status(400).json({ success: false, message: 'Username and newScore required' });
+  }
+
+  const usersData = readJSON(USERS_FILE);
+  if (!usersData) return res.status(500).json({ success: false });
+
+  const userIndex = usersData.users.findIndex(u => u.username === username);
+  if (userIndex === -1) {
+    return res.status(404).json({ success: false, message: 'User not found' });
+  }
+
+  const user = usersData.users[userIndex];
+  user.score = Math.min(100, Math.max(0, newScore));
+  if (perfectUpgradeIncrement > 0) {
+    user.perfectUpgrades += perfectUpgradeIncrement;
+  }
+  user.lastAttempt = new Date().toISOString().split('T')[0];
+
+  usersData.users[userIndex] = user;
+  if (writeJSON(USERS_FILE, usersData)) {
+    updateLeaderboard(); // refresh leaderboard
+    const { password: _, ...safeUser } = user;
+    res.json({ success: true, user: safeUser });
+  } else {
+    res.status(500).json({ success: false, message: 'Failed to update user' });
+  }
+});
+
+// 4. Get leaderboard
+app.get('/api/leaderboard', (req, res) => {
+  const leaderboard = readJSON(LEADERBOARD_FILE);
+  if (!leaderboard) {
+    return res.status(500).json({ success: false, message: 'Leaderboard unavailable' });
+  }
+  res.json({ success: true, leaderboard });
+});
+
+// 5. Get specific user profile
+app.get('/api/user/:username', (req, res) => {
+  const { username } = req.params;
+  const usersData = readJSON(USERS_FILE);
+  if (!usersData) return res.status(500).json({ success: false });
+
+  const user = usersData.users.find(u => u.username === username);
+  if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+  const { password: _, ...safeUser } = user;
+  res.json({ success: true, user: safeUser });
+});
+
+// 6. (Optional) Get all users (admin only? but for demo simplicity)
+app.get('/api/users', (req, res) => {
+  const usersData = readJSON(USERS_FILE);
+  if (!usersData) return res.status(500).json({ success: false });
+  const safeUsers = usersData.users.map(({ password, ...rest }) => rest);
+  res.json({ success: true, users: safeUsers });
+});
+
+// ---------- Serve frontend (fallback) ----------
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// ---------- Start server ----------
+app.listen(PORT, () => {
+  console.log(`🚀 Score Upgrader backend running on http://localhost:${PORT}`);
+  console.log(`📁 Users file: ${USERS_FILE}`);
+  console.log(`🏆 Leaderboard file: ${LEADERBOARD_FILE}`);
+  // Initialize leaderboard if needed
+  updateLeaderboard();
+});

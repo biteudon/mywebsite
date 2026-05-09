@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>About | Score Upgrader</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #111;
+      color: #f5f5f5;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    /* custom scroll */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1a1a1a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #ff3b3b;
+      border-radius: 10px;
+    }
+
+    /* navigation (consistent with blog) */
+    .navbar {
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 59, 59, 0.3);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo a {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #ff3b3b;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+      text-shadow: 0 0 5px rgba(255,59,59,0.5);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: #ddd;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.2s;
+      font-size: 1rem;
+    }
+
+    .nav-links a:hover {
+      color: #ff3b3b;
+    }
+
+    .btn-outline {
+      border: 1px solid #ff3b3b;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      background: transparent;
+    }
+
+    .btn-outline:hover {
+      background: #ff3b3b20;
+      border-color: #ff6b6b;
+    }
+
+    /* main container */
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    /* hero section */
+    .hero {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      background: linear-gradient(135deg, #fff, #ff8a8a);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      color: #aaa;
+      max-width: 700px;
+      margin: 0 auto;
+      font-size: 1.2rem;
+    }
+
+    /* mission card */
+    .mission-card {
+      background: rgba(20, 20, 30, 0.7);
+      backdrop-filter: blur(8px);
+      border-radius: 48px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+      border: 1px solid rgba(255, 59, 59, 0.3);
+      text-align: center;
+    }
+
+    .mission-card h2 {
+      color: #ff3b3b;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .mission-card p {
+      color: #ccc;
+      font-size: 1.1rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* features grid */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .feature-item {
+      background: #12121c;
+      border-radius: 32px;
+      padding: 1.8rem;
+      transition: all 0.3s ease;
+      border: 1px solid #23232e;
+      text-align: center;
+    }
+
+    .feature-item:hover {
+      transform: translateY(-5px);
+      border-color: #ff3b3b;
+      box-shadow: 0 15px 25px -12px rgba(255,59,59,0.2);
+    }
+
+    .feature-icon {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-item h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.8rem;
+      color: #fff;
+    }
+
+    .feature-item p {
+      color: #aaa;
+      line-height: 1.5;
+    }
+
+    /* team section */
+    .team-section {
+      margin: 3rem 0;
+    }
+
+    .team-section h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #ff8a8a;
+    }
+
+    .team-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+    }
+
+    .team-card {
+      background: #0e0e18;
+      border-radius: 32px;
+      padding: 1.5rem;
+      width: 240px;
+      text-align: center;
+      border: 1px solid #2a2a36;
+      transition: 0.2s;
+    }
+
+    .team-card:hover {
+      border-color: #ff3b3b;
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+      background: linear-gradient(145deg, #ff3b3b, #a00000);
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: white;
+    }
+
+    .team-card h4 {
+      font-size: 1.3rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .team-card .role {
+      color: #ff8a8a;
+      font-size: 0.85rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .team-card .bio {
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    /* stats section */
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 2rem;
+      background: linear-gradient(145deg, #0a0a12, #050508);
+      border-radius: 48px;
+      padding: 2rem;
+      margin: 2rem 0;
+      text-align: center;
+    }
+
+    .stat {
+      flex: 1;
+    }
+
+    .stat-number {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: #ff3b3b;
+    }
+
+    .stat-label {
+      color: #bbb;
+      font-size: 1rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid #222;
+      color: #777;
+      font-size: 0.8rem;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 0 1.2rem;
+      }
+      .hero h1 {
+        font-size: 2rem;
+      }
+      .nav-container {
+        flex-direction: column;
+      }
+      .mission-card {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <a href="index.html">⚡SCORE<span style="color:white;">UP</span></a>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">Score Tool</a>
+        <a href="blog.html">Blog</a>
+        <a href="about.html" class="btn-outline">About</a>
+        <a href="login.html">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="hero">
+      <h1>📖 About Score Upgrader</h1>
+      <p>We help you turn good into perfect — one upgrade at a time.</p>
+    </div>
+
+    <div class="mission-card">
+      <h2>🎯 Our Mission</h2>
+      <p>To build tools that celebrate precision, motivate growth, and make the journey to 100% both fun and rewarding. Score Upgrader was born from a simple idea: instant feedback + one-click perfection = peak performance.</p>
+    </div>
+
+    <div class="features">
+      <div class="feature-item">
+        <div class="feature-icon">⚡</div>
+        <h3>Instant Upgrade</h3>
+        <p>One click transforms any text into the exact target phrase — achieving 100% score in milliseconds.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📊</div>
+        <h3>Real-Time Scoring</h3>
+        <p>Position-based similarity algorithm gives fair, transparent scores from 0 to 100. Watch your progress live.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔐</div>
+        <h3>User Profiles</h3>
+        <p>Login with JSON-based authentication, save your perfect upgrades, and track your history.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🧠</div>
+        <h3>Learning Focus</h3>
+        <p>Perfect for memorization, typing practice, or just gamifying your daily goals. Master exact recall.</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Upgrade success rate</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">15+</div>
+        <div class="stat-label">Interactive tools</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">∞</div>
+        <div class="stat-label">Perfect moments created</div>
+      </div>
+    </div>
+
+    <div class="team-section">
+      <h2>⭐ The Crew</h2>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="avatar">🧑‍💻</div>
+          <h4>Alex Rivera</h4>
+          <div class="role">Lead Developer</div>
+          <div class="bio">Loves clean code, instant feedback loops, and hitting 100% before coffee.</div>
+        </div>
+        <div class="team-card">
+          <div class="avatar">🎨</div>
+          <h4>Jordan Lee</h4>
+          <div class="role">UX Designer</div>
+          <div class="bio">Crafted the neon glows and smooth animations. Believes perfection feels good.</div>
+        </div>
+        <div class="team-card">
+          <div class="avatar">📈</div>
+          <h4>Samira Khan</h4>
+          <div class="role">Product Lead</div>
+          <div class="bio">Gamification expert. Turned “upgrade” into a delightful habit.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:#0b0b12; border-radius: 32px; padding: 2rem; margin-top: 1rem; border-left: 6px solid #ff3b3b;">
+      <h3 style="color:#ff3b3b; margin-bottom: 0.5rem;">📌 Behind the scenes</h3>
+      <p style="color:#bbb;">Score Upgrader uses a character-position matching algorithm to calculate similarity, then offers a one‑click “Upgrade to 100%” that inserts the exact target phrase. The entire project is front‑first, with user data stored in localStorage and a mock JSON user database for login demos.</p>
+      <p style="margin-top: 12px; color:#aaa;">We believe in transparent scoring — no black boxes, just pure upgrade magic.</p>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 Score Upgrader — upgrade your potential, reach 100% every time.</p>
+  </footer>
+</body>
+</html>

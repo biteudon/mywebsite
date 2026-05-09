@@ -1,0 +1,85 @@
+{
+  "lastUpdated": "2026-05-10T12:00:00Z",
+  "topScores": [
+    {
+      "rank": 1,
+      "username": "scoremaster",
+      "score": 100,
+      "perfectUpgrades": 12,
+      "lastAttempt": "2026-05-10",
+      "badge": "🏆"
+    },
+    {
+      "rank": 2,
+      "username": "player_one",
+      "score": 98,
+      "perfectUpgrades": 7,
+      "lastAttempt": "2026-05-10",
+      "badge": "⭐"
+    },
+    {
+      "rank": 3,
+      "username": "upgrade_king",
+      "score": 95,
+      "perfectUpgrades": 9,
+      "lastAttempt": "2026-05-09",
+      "badge": "🔥"
+    },
+    {
+      "rank": 4,
+      "username": "newbie",
+      "score": 87,
+      "perfectUpgrades": 4,
+      "lastAttempt": "2026-05-10",
+      "badge": "🌱"
+    },
+    {
+      "rank": 5,
+      "username": "flash101",
+      "score": 82,
+      "perfectUpgrades": 3,
+      "lastAttempt": "2026-05-08",
+      "badge": "⚡"
+    },
+    {
+      "rank": 6,
+      "username": "precision_master",
+      "score": 76,
+      "perfectUpgrades": 5,
+      "lastAttempt": "2026-05-07",
+      "badge": "📌"
+    },
+    {
+      "rank": 7,
+      "username": "typing_hero",
+      "score": 70,
+      "perfectUpgrades": 2,
+      "lastAttempt": "2026-05-06",
+      "badge": "⌨️"
+    },
+    {
+      "rank": 8,
+      "username": "lazy_dog",
+      "score": 64,
+      "perfectUpgrades": 1,
+      "lastAttempt": "2026-05-05",
+      "badge": "🐕"
+    },
+    {
+      "rank": 9,
+      "username": "fox_jumper",
+      "score": 58,
+      "perfectUpgrades": 0,
+      "lastAttempt": "2026-05-04",
+      "badge": "🦊"
+    },
+    {
+      "rank": 10,
+      "username": "rookie101",
+      "score": 45,
+      "perfectUpgrades": 0,
+      "lastAttempt": "2026-05-03",
+      "badge": "🌟"
+    }
+  ]
+}

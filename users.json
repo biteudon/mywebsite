@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "player_one",
+      "score": 85,
+      "perfectUpgrades": 3,
+      "lastAttempt": "2026-05-10"
+    },
+    {
+      "id": 2,
+      "username": "scoremaster",
+      "score": 100,
+      "perfectUpgrades": 12,
+      "lastAttempt": "2026-05-10"
+    },
+    {
+      "id": 3,
+      "username": "newbie",
+      "score": 42,
+      "perfectUpgrades": 0,
+      "lastAttempt": "2026-05-09"
+    }
+  ]
+}

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Blog | Score Upgrader</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #111;
+      color: #f5f5f5;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    /* custom scroll */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1a1a1a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #ff3b3b;
+      border-radius: 10px;
+    }
+
+    /* navigation */
+    .navbar {
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 59, 59, 0.3);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .logo a {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #ff3b3b;
+      text-decoration: none;
+      letter-spacing: -0.5px;
+      text-shadow: 0 0 5px rgba(255,59,59,0.5);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: #ddd;
+      text-decoration: none;
+      font-weight: 500;
+      transition: 0.2s;
+      font-size: 1rem;
+    }
+
+    .nav-links a:hover {
+      color: #ff3b3b;
+    }
+
+    .btn-outline {
+      border: 1px solid #ff3b3b;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      background: transparent;
+    }
+
+    .btn-outline:hover {
+      background: #ff3b3b20;
+      border-color: #ff6b6b;
+    }
+
+    /* main layout */
+    .container {
+      max-width: 1300px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      background: linear-gradient(135deg, #fff, #ff8a8a);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      color: #aaa;
+      max-width: 700px;
+      margin: 0 auto;
+      font-size: 1.2rem;
+    }
+
+    /* blog grid */
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .blog-card {
+      background: #12121c;
+      border-radius: 32px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border: 1px solid #23232e;
+      box-shadow: 0 10px 20px -5px rgba(0,0,0,0.5);
+    }
+
+    .blog-card:hover {
+      transform: translateY(-6px);
+      border-color: #ff3b3b;
+      box-shadow: 0 20px 30px -12px rgba(255,59,59,0.2);
+    }
+
+    .card-img {
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .category {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: #ff3b3b;
+      padding: 4px 12px;
+      border-radius: 40px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      color: white;
+    }
+
+    .card-content {
+      padding: 1.5rem;
+    }
+
+    .card-content h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+      color: #fff;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.8rem;
+      color: #ff8a8a;
+      margin-bottom: 1rem;
+    }
+
+    .card-meta span {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .excerpt {
+      color: #bbb;
+      margin-bottom: 1.2rem;
+      line-height: 1.4;
+    }
+
+    .read-more {
+      color: #ff3b3b;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: 0.2s;
+    }
+
+    .read-more:hover {
+      gap: 10px;
+      color: #ff7777;
+    }
+
+    /* featured section */
+    .featured {
+      background: linear-gradient(145deg, #0e0e16, #08080f);
+      border-radius: 48px;
+      padding: 2rem;
+      margin: 2rem 0 3rem;
+      border: 1px solid #2a2a36;
+    }
+
+    .featured h2 {
+      font-size: 1.8rem;
+      color: #ff3b3b;
+      margin-bottom: 1rem;
+    }
+
+    .featured-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .featured-text {
+      flex: 2;
+    }
+
+    .featured-text p {
+      color: #ccc;
+      margin-bottom: 1rem;
+    }
+
+    .featured-badge {
+      background: #ff3b3b30;
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .featured-img {
+      flex: 1;
+      background: #2a2a36;
+      border-radius: 32px;
+      height: 180px;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff3b3b40" width="80px" height="80px"><path d="M12 2L15 8.5L22 9.5L17 14L18.5 21L12 17.5L5.5 21L7 14L2 9.5L9 8.5L12 2z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 80px;
+    }
+
+    /* pagination */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 3rem 0 2rem;
+    }
+
+    .page-btn {
+      background: #1e1e2a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .page-btn.active {
+      background: #ff3b3b;
+      box-shadow: 0 0 8px #ff3b3b;
+    }
+
+    .page-btn:hover:not(.active) {
+      background: #ff3b3b80;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid #222;
+      color: #777;
+      font-size: 0.8rem;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 720px) {
+      .container {
+        padding: 0 1.2rem;
+      }
+      .hero h1 {
+        font-size: 2rem;
+      }
+      .nav-container {
+        flex-direction: column;
+      }
+      .featured-grid {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <a href="index.html">⚡SCORE<span style="color:white;">UP</span></a>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">Score Tool</a>
+        <a href="blog.html" class="btn-outline">Blog</a>
+        <a href="login.html">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="hero">
+      <h1>📝 The Score Upgrader Blog</h1>
+      <p>Insights, tutorials and motivation to achieve 100% in everything you do. Level up your performance.</p>
+    </div>
+
+    <!-- featured post -->
+    <div class="featured">
+      <div class="featured-grid">
+        <div class="featured-text">
+          <div class="featured-badge">⭐ FEATURED</div>
+          <h2>How to achieve 100% precision every time</h2>
+          <p>Discover the mindset and techniques behind perfect matching. From upgrade strategies to mastering consistency — this guide will transform your approach.</p>
+          <a href="#" class="read-more" style="color:#ff8c8c;">Read Featured Story →</a>
+        </div>
+        <div class="featured-img"></div>
+      </div>
+    </div>
+
+    <!-- blog grid dynamic from JS (also fallback static) -->
+    <div class="blog-grid" id="blogGrid"></div>
+
+    <!-- pagination (demo) -->
+    <div class="pagination" id="paginationControls">
+      <button class="page-btn active" data-page="1">1</button>
+      <button class="page-btn" data-page="2">2</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2026 Score Upgrader — turn every attempt into perfection. <br> Fuel your growth with 100% accuracy.</p>
+  </footer>
+
+  <script>
+    // blog data (articles matching the dark theme + scores/progress theme)
+    const allArticles = [
+      {
+        id: 1,
+        title: "Why exact matching boosts your memory by 200%",
+        category: "Productivity",
+        date: "May 5, 2026",
+        readTime: "4 min read",
+        excerpt: "Research shows that aiming for 100% accuracy rewires neural pathways. Learn how the upgrade mindset can be applied to learning.",
+        image: "🧠",
+        bgStyle: "linear-gradient(135deg, #1e2a3a, #0a0f1a)"
+      },
+      {
+        id: 2,
+        title: "The psychology behind 'Upgrade to 100%' button",
+        category: "UX Design",
+        date: "Apr 28, 2026",
+        readTime: "5 min read",
+        excerpt: "Why a single click that completes your task feels so satisfying. We explore feedback loops and gamification.",
+        image: "🎯",
+        bgStyle: "linear-gradient(135deg, #2a1e2a, #110a1a)"
+      },
+      {
+        id: 3,
+        title: "From 42% to 100%: A developer's journey",
+        category: "Success Stories",
+        date: "Apr 20, 2026",
+        readTime: "6 min read",
+        excerpt: "Meet newbie turned master. Using the Score Upgrader tool daily to reach perfect scores and upgrade performance.",
+        image: "🚀",
+        bgStyle: "linear-gradient(135deg, #1a2a1a, #0a1a0a)"
+      },
+      {
+        id: 4,
+        title: "Building a real-time score system with JavaScript",
+        category: "Tech",
+        date: "Apr 12, 2026",
+        readTime: "7 min read",
+        excerpt: "Deep dive into the similarity algorithm – positional matching and upgrade to 100% logic explained step by step.",
+        image: "⚙️",
+        bgStyle: "linear-gradient(135deg, #2a2a1a, #111100)"
+      },
+      {
+        id: 5,
+        title: "Gamify your learning: why scores matter",
+        category: "Motivation",
+        date: "Apr 5, 2026",
+        readTime: "3 min read",
+        excerpt: "Turning枯燥 tasks into exciting challenges. Learn how scoring systems can increase engagement and retention.",
+        image: "🏆",
+        bgStyle: "linear-gradient(135deg, #1a1a2a, #0a0a1a)"
+      },
+      {
+        id: 6,
+        title: "User authentication and JSON storage for score apps",
+        category: "Backend",
+        date: "Mar 28, 2026",
+        readTime: "8 min read",
+        excerpt: "How to structure users.json, handle login and persist user scores across sessions. Practical tutorial.",
+        image: "🔐",
+        bgStyle: "linear-gradient(135deg, #2a1515, #1a0505)"
+      }
+    ];
+
+    const page2Articles = [
+      {
+        id: 7,
+        title: "10 productivity hacks from perfect scorers",
+        category: "Lifehacks",
+        date: "Mar 20, 2026",
+        readTime: "5 min read",
+        excerpt: "From morning routines to focus sprints – habits that lead to consistent 100% performance.",
+        image: "⏱️",
+        bgStyle: "linear-gradient(135deg, #151f2a, #080e12)"
+      },
+      {
+        id: 8,
+        title: "CSS glow effects for score displays",
+        category: "Design",
+        date: "Mar 10, 2026",
+        readTime: "4 min read",
+        excerpt: "How we built the neon result box with animations and subtle transitions to celebrate perfection.",
+        image: "✨",
+        bgStyle: "linear-gradient(135deg, #1a2424, #0a1111)"
+      },
+      {
+        id: 9,
+        title: "Upgrade culture: aiming for perfection without burnout",
+        category: "Mindset",
+        date: "Feb 28, 2026",
+        readTime: "6 min read",
+        excerpt: "Balance between 100% and growth. True upgrade is not about pressure, but about mastery.",
+        image: "🧘",
+        bgStyle: "linear-gradient(135deg, #2a1a24, #110a14)"
+      }
+    ];
+
+    const allPages = {
+      1: allArticles,
+      2: page2Articles
+    };
+
+    let currentPage = 1;
+    const blogGrid = document.getElementById('blogGrid');
+    const paginationBtns = document.querySelectorAll('.page-btn');
+
+    function renderPage(page) {
+      const articles = allPages[page] || allPages[1];
+      if (!blogGrid) return;
+      
+      blogGrid.innerHTML = '';
+      articles.forEach(article => {
+        const card = document.createElement('div');
+        card.className = 'blog-card';
+        
+        // image div with icon and background
+        const imageDiv = document.createElement('div');
+        imageDiv.className = 'card-img';
+        imageDiv.style.background = article.bgStyle || 'linear-gradient(145deg, #1f1f2e, #0f0f18)';
+        // center emoji
+        imageDiv.style.display = 'flex';
+        imageDiv.style.alignItems = 'center';
+        imageDiv.style.justifyContent = 'center';
+        imageDiv.style.fontSize = '4rem';
+        imageDiv.innerHTML = `<span style="opacity:0.9;">${article.image || '📄'}</span>`;
+        
+        const categorySpan = document.createElement('div');
+        categorySpan.className = 'category';
+        categorySpan.textContent = article.category;
+        imageDiv.appendChild(categorySpan);
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'card-content';
+        contentDiv.innerHTML = `
+          <h3>${article.title}</h3>
+          <div class="card-meta">
+            <span>📅 ${article.date}</span>
+            <span>⏱️ ${article.readTime}</span>
+          </div>
+          <p class="excerpt">${article.excerpt}</p>
+          <a href="#" class="read-more">Continue reading →</a>
+        `;
+        
+        card.appendChild(imageDiv);
+        card.appendChild(contentDiv);
+        blogGrid.appendChild(card);
+      });
+      
+      // update active pagination style
+      paginationBtns.forEach(btn => {
+        const pageNum = parseInt(btn.getAttribute('data-page'), 10);
+        if (pageNum === page) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+    
+    // pagination click handlers
+    paginationBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const newPage = parseInt(btn.getAttribute('data-page'), 10);
+        if (!isNaN(newPage) && allPages[newPage]) {
+          currentPage = newPage;
+          renderPage(currentPage);
+          // smooth scroll to top of grid
+          blogGrid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+    
+    // initial render
+    renderPage(1);
+    
+    // optional: handle read-more links to prevent page reload (just demo)
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('.read-more')) {
+        e.preventDefault();
+        alert('📖 Full article coming soon. Stay tuned for deep insights about scoring perfection!');
+      }
+    });
+  </script>
+</body>
+</html>
